@@ -41,25 +41,36 @@
 
 2. 采用`MVCC`：双层调度器使用的`PCC`的主要缺点是并发粒度小，因为在任意一个时刻，中央资源调度器只会将所有资源推送给任意一个调度器，等到这个调度器返回资源使用情况后，才能将资源推送给其他调度器，这大大限制了系统并发性。`Omega`使用的`MVCC`，将集群状态数据持久化，并共享给所有调度器。这样所有的调度器可以并行工作，而影响该机制性能的一个因素是资源访问冲突的次数，冲突次数越多，系统性能下降得越快，而论文中的实验表明，这种方式的冲突次数是可以接受的
 
-3. 调度由支持并发的子调度器完成，这些子调度器由各个应用程序自我管理和控制，`Omega`只是将优先级这一限制放在了共享数据的验证代码中，即当同时有多个应用程序申请同一份资源时，优先级最高的那个将获得该资源，其他资源限制全部下放到各个子调度器
+3. 调度由支持并发的子调度器完成，这些子调度器由各个应用程序自我管理和控制，`Omega`只是将优先级这一限制放在了共享数据的验证代码中，即当同时有多个应用程序申请同一份资源时，优先级最高的那个将获得该资源，其他资源限制全部下放到各个子调度器。从论文来看，这些子调度器还需要人为设计，但更理想的情况应该是可以直接指定
 
-4. `Omega`采用`all-or-nothing`的资源分配方式。`all-or-nothing`可能会造成作业饿死（大资源需求的任务永远得到不需要的资源），而`incremental placement`会造成资源长时间闲置，同时可也能导致作业饿死
+4. `Omega`采用`incremental transactions`的资源分配方式，只要不冲突就可以完成分配。至于具体的scheduler可以采用`all-or-nothing`的方式，也可以采用`incremental placement`的方式。`all-or-nothing`可能会造成作业饿死（大资源需求的任务永远得到不需要的资源），而`incremental placement`会造成资源长时间闲置，同时可也能导致作业饿死
 
 ## 四、对比
 
 ![comparision](./pic/comparison.png)
 
-## 五、疑问 
+1. `Omega`会不会取代`Borg`？它们关注的点有什么不同之处？
+    
+    开发Omega的主要原因并不是伸缩性，而是工程实现的灵活性。其目标是让不同的团队都可以来独立开发自己的调度器，这其实比伸缩性更加重要。事实上，一个实现良好的集中式调度器同样可以用于大型集群——Borg的论文也已经证明了这一点。<sup>[3]</sup>
+
+## 五、其他
 
 1. 整体架构是什么样的？
 
+![整体架构](./pic/OmegaArch.jpg)
+
 2. 子调度器如何保证fairness？
 
-3. 从调度架构的演变史来看，将来会不会出现全分布式的架构？
+    子调度器可以实施任何策略来保证fairness，不过也有可能为了低的through time，子调度器就不太关心fairness
+
 
 ----------------------
 
 ## 参考文献
 - [1] [Omega: flexible, scalable schedulers for large compute clusters](http://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/41684.pdf)
 - [2] [十大主流集群调度系统大盘点](https://blog.csdn.net/vip_iter/article/details/80123228)
+- [3] [Omega集群调度系统论文第一作者Malte Schwarzkopf的访谈](http://chuansong.me/n/2035187)
 
+## 待阅读
+- [Paxos协议](https://www.google.com/search?q=PAXOS)
+- [Chubby](https://ai.google/research/pubs/pub27897)
