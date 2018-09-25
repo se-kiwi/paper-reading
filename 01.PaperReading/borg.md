@@ -4,7 +4,7 @@
 ## 一、基础架构
 
 ### 1.系统结构
-![architecture of bog](./borg_assests/figure1.png)
+![architecture of bog](./pic/figure1.png)
 
 Borg 由三个最主要的部分组成，一是外部管理工具和配置文件，二是中央控制器BorgMaster，三是每个机器上的Borglet。。
 
@@ -46,7 +46,7 @@ Borg 由三个最主要的部分组成，一是外部管理工具和配置文件
 在实验中，调度编排一个cell的全部工作负载通常需要几百秒，但是禁用上述技术后超过三天还没有完成。通常在等待队列上的在线调度产地在不到半秒内完成。
 
 ### 2.可用性
-![evict reason](./borg_assests/figure3.png)
+![evict reason](./pic/figure3.png)
 <center>上图展示了几种任务被逐出的原因</center>
 
   ----
@@ -61,24 +61,24 @@ Borg通过以下措施来减轻这些事件的影响：
 Borg的一个关键设计是，计时Borgmaster或任务Borglet关闭，已经运行的任务也会继续运行。
 
 ### 3.利用率
-![The effects of compaction.](./borg_assests/figure4.png)
+![The effects of compaction.](./pic/figure4.png)
 - Borg采用一种叫做*cell compaction*的方法对利用率进行评估，这一方法旨在测定一个job在不同的策略下需求的cell大小，以此来比较不同策略对利用率的影响
 ----
-![Segregating prod and non-prod work into different cells would need more machines](./borg_assests/figure5.png)
+![Segregating prod and non-prod work into different cells would need more machines](./pic/figure5.png)
 
-![: Segregating users would need more machines](./borg_assests/figure6.png)
+![: Segregating users would need more machines](./pic/figure6.png)
 - 将`prod`和`non-prod`任务编排在同一cell，使`prod`与`non-prod`互补从而减少机器使用的突然峰值和空闲。
 ----
-![Subdividing cells into smaller ones would require more machines](./borg_assests/figure7.png)
+![Subdividing cells into smaller ones would require more machines](./pic/figure7.png)
 - 构建更大的cell，使得能够容纳更多服务，并彼此消去资源的波动。
 ----
-![No bucket sizes fit most of the tasks well](./borg_assests/figure8.png)
-![Bucketing” resource requirements would need more machines](./borg_assests/figure9.png)
+![No bucket sizes fit most of the tasks well](./pic/figure8.png)
+![Bucketing” resource requirements would need more machines](./pic/figure9.png)
 - 细粒度资源请求，而非使用传统的以二的幂为bocket的资源划分。
 ----
-![Resource reclamation is quite effective](./borg_assests/figure10.png)
-![Resource estimation is successful at identifying unused resources](./borg_assests/figure11.png)
-![More aggressive resource estimation can reclaim more resources, with little effect on out-of-memory events](./borg_assests/figure12.png)
+![Resource reclamation is quite effective](./pic/figure10.png)
+![Resource estimation is successful at identifying unused resources](./pic/figure11.png)
+![More aggressive resource estimation can reclaim more resources, with little effect on out-of-memory events](./pic/figure12.png)
 
 
 - 资源回收，Borg估计任务将要使用的资源，并回收可以使得`non-prod`工作的资源。
