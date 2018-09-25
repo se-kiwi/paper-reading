@@ -88,3 +88,4 @@ Kubernetes属于主从分布式架构，主要由Master Node与Worker Node组成
 - [kubernetes-整体概述和架构](https://blog.csdn.net/u014042372/article/details/80573213)
 - [kubernetes基本框架和基本概念](https://www.jianshu.com/p/0a656b3d94b2)
 - [Kubernetes: Twelve Key Features](https://medium.com/@abhaydiwan/kubernetes-introduction-and-twelve-key-features-cdfe8a1f2d21)
+- [Borg, Omega, and kubernetes, lessons learned from three container-management systems over a decade](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/44843.pdf)
