@@ -4,7 +4,7 @@
 ## 一、基础架构
 
 ### 1.系统结构
-![architecture of bog](./pic/figure1.png)
+![architecture of bog](./pic/borg-figure1.png)
 
 Borg 由三个最主要的部分组成，一是外部管理工具和配置文件，二是中央控制器BorgMaster，三是每个机器上的Borglet。。
 
@@ -21,11 +21,13 @@ Borg 由三个最主要的部分组成，一是外部管理工具和配置文件
     - 出现在cell的每一台机器中，实质是一个本地的Borg代理。
     - 能够控制task，并自动重启以及管理本地资源和向BorgMaster报告状态。
   
+----
 ### 2.workload
 
 - 需要长期运行，处理短暂且对延迟敏感的任务，这类任务被称为production, 简写为`prod`。
 - 需要几秒到几天来完成的批处理任务，对短时间的性能波动不敏感，这类人物被称为non-production，简写为`non-prod`。
 
+----
 ### 3.资源层次
 
 - 许多台machine被聚合为一个cell。
@@ -33,6 +35,11 @@ Borg 由三个最主要的部分组成，一是外部管理工具和配置文件
 - 一个cluster被放在单个data center中。
 - 多个data center构成一个site。
 
+----
+### 4.工作流程
+![工作流程](./pic/borg-figure2.png)
+
+----
 ## 二、工作特点
 
 ### 1.可扩展性
@@ -45,11 +52,12 @@ Borg 由三个最主要的部分组成，一是外部管理工具和配置文件
   
 在实验中，调度编排一个cell的全部工作负载通常需要几百秒，但是禁用上述技术后超过三天还没有完成。通常在等待队列上的在线调度产地在不到半秒内完成。
 
+----
 ### 2.可用性
-![evict reason](./pic/figure3.png)
+![evict reason](./pic/borg-figure3.png)
 <center>上图展示了几种任务被逐出的原因</center>
 
-  ----
+----
 Borg通过以下措施来减轻这些事件的影响：
 - 如果有必要就自动重新调度被逐出的任务。
 - 通过在机器、机架、电源域之间分散任务，减少关联故障。
@@ -60,25 +68,26 @@ Borg通过以下措施来减轻这些事件的影响：
 
 Borg的一个关键设计是，计时Borgmaster或任务Borglet关闭，已经运行的任务也会继续运行。
 
+----
 ### 3.利用率
-![The effects of compaction.](./pic/figure4.png)
+![The effects of compaction.](./pic/borg-figure4.png)
 - Borg采用一种叫做*cell compaction*的方法对利用率进行评估，这一方法旨在测定一个job在不同的策略下需求的cell大小，以此来比较不同策略对利用率的影响
 ----
-![Segregating prod and non-prod work into different cells would need more machines](./pic/figure5.png)
+![Segregating prod and non-prod work into different cells would need more machines](./pic/borg-figure5.png)
 
-![: Segregating users would need more machines](./pic/figure6.png)
+![: Segregating users would need more machines](./pic/borg-figure6.png)
 - 将`prod`和`non-prod`任务编排在同一cell，使`prod`与`non-prod`互补从而减少机器使用的突然峰值和空闲。
 ----
-![Subdividing cells into smaller ones would require more machines](./pic/figure7.png)
+![Subdividing cells into smaller ones would require more machines](./pic/borg-figure7.png)
 - 构建更大的cell，使得能够容纳更多服务，并彼此消去资源的波动。
 ----
-![No bucket sizes fit most of the tasks well](./pic/figure8.png)
-![Bucketing” resource requirements would need more machines](./pic/figure9.png)
+![No bucket sizes fit most of the tasks well](./pic/borg-figure8.png)
+![Bucketing” resource requirements would need more machines](./pic/borg-figure9.png)
 - 细粒度资源请求，而非使用传统的以二的幂为bocket的资源划分。
 ----
-![Resource reclamation is quite effective](./pic/figure10.png)
-![Resource estimation is successful at identifying unused resources](./pic/figure11.png)
-![More aggressive resource estimation can reclaim more resources, with little effect on out-of-memory events](./pic/figure12.png)
+![Resource reclamation is quite effective](./pic/borg-figure10.png)
+![Resource estimation is successful at identifying unused resources](./pic/borg-figure11.png)
+![More aggressive resource estimation can reclaim more resources, with little effect on out-of-memory events](./pic/borg-figure12.png)
 
 
 - 资源回收，Borg估计任务将要使用的资源，并回收可以使得`non-prod`工作的资源。
@@ -110,6 +119,8 @@ Omega [69]支持多个平行的，专门的“垂直”，每个大致相当于B
 - 不应该设置job来限制组织任务的方法。这限制了诸如滚动更新、天正作业大小的不灵活问题。
 - 给每个机器一个IP使得问题变得复杂，Borg必须调度端口作为资源，任务需要声明自己需求的端口资源、Borglet必须强制端口隔离，命名系统和RPC需要处理端口和IP地址。
 - Borg针对高级用户进行优化，并提供了一系列特权用户的功能，这使得一切对其他用户更难。
+
+----
 ### 经验
 - Allocs是有用的。
 - 集群管理系统不只是一个任务管理系统。运行在Borg上的应用程序可以从许多其他集群服务中收益。
