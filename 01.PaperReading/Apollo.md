@@ -17,7 +17,7 @@
 - DOP（degree of parallelism ）：每个stage中并行的task数量。
 ![DAG](./pic/DAG.png)
 ### 2 容量管理
-Apollo采用基于token的容量管理机制。每一个token代表了CPU和内存的固定配额。当为某个job分配内存和CPU时，根据token进行分配。
+Apollo采用基于token的容量管理机制。每一个token代表了CPU和内存的固定配额。当为某个job分配内存和CPU时，Apollo为其分配一定数目的token。
 ### 3 job调度的基本概念
 - 待调度任务列表(ready list)：保存着已准备就绪，等待调度的task。
 - 任务优先级(task priority):根据任务的优先级对待调度任务列表中的任务进行调度。
@@ -26,11 +26,9 @@ Apollo采用基于token的容量管理机制。每一个token代表了CPU和内�
 - 故障恢复(failture recovery)：监视已调度task的状态，如果失败，尝试进行恢复，如果恢复失败，将这个job标记为失败。
 - 任务完成(task completion)：当一个task依赖的所有task完成，将这个task放入待调度任务列表。
 - 工作完成(job completion)：job中的所有task都完成。
-### 4 生产工作的特性
-在生产环境中，往往要面对成千上万个job，这些job在各个方面都有所不同，比如处理的数据量，处理逻辑等，这对调度框架的伸缩性，高效性，健壮性提出了挑战。
 ## 三 Apollo基本框架
 ### 1 框架总览
-![ApplloArchitecture](./pic/ApolloArchitecture.png)
+![ApolloArchitecture](./pic/ApolloArchitecture.png)
 Apollo框架的主要组成部分：
 - JM(Job Manager)：每个cluster上有一个，它管理job的生命周期
 - RM(Resource Monitor)：收集来自Process Nodes上的负载信息（主要通过），为JM提供整个cluster的状态信息，便于确定job的调度的决策。
@@ -53,7 +51,7 @@ job latency不仅与预估的运行时间有关，与task调度顺序也有关�
 - 因为分布式的原因，JMs调度决策彼此存在竞争。
 - 调度过程中使用的Waste-time Matrix数据可能已过期。因为在实际的生产环境中，server状态可能随时改变。
 因此我们需要校正策略帮助我们纠正错误。
-##### 3.4.2 延时调度的原因
+##### 3.4.2 延时校正的原因
 对调度的纠正并非是在调度时就进行操作。因为某些错误的调度并非一定是有害的。如果两个JM将task调度到同一个server，只要server资源充足，便能并行的运行两个task。或者前一个调度至server的task结束的很快，并不影响后面的task。
 ##### 3.4.3 Duplicate Scheduling
 对于错误的调度可能存在以下三种情况：
@@ -76,3 +74,31 @@ Apollo将job分为两种，regular task和opportunistic task。对于regular job
 Apollo对opportunistic task采用一种随机挑选的方式。为了防止闲置资源被某一个job全部占用，Apollo为每个opportunistic task设定了占用资源的上限。当一个server有闲置资源时，而regular-task queue为空，PN会从opportunistic-task 随机挑选一个task执行。这样可以避免前面的task一直霸占资源，使得所有task都有同样的机会得以运行。
 ##### 3.5.4 Task Upgrade
 当server处于负载压力过大的情况下时，低优先级的opportunistic task便有“饿死”(starvation)的风险。为了应对这一问题，Apollo提供了任务升级策略。即在某个时间点将为opportunistic task分配资源使其升级为regular task。一般情况下，调度器会把处于regular task较少，但是opportunistic task等待时间较长的server上的task进行升级。避免影响一些regular task的运行。
+## 四 评测
+测试方法：
+- 列出并分析已部署了Apollo的cluster的某些数据
+- 对一些关键的job进行深度分析
+- 在一些特定的点，使用测试驱动的方法与其他大规模调度进行比较
+### 1 生产环境下Apollo调度情况
+![ApolloSchedulingRate](./pic/ApolloSchedulingRate.png)
+scheduling rate：每秒集群scheduler调度的task中得以执行的task
+不难看出，在生产环境下，Apollo scheduling rate一般稳定在10000左右，最高可达20000。
+![ApolloUtilization](./pic/ApolloUtilization.png)
+(a)图展现了cluster中并发执行的job数和task数
+(b)图展现了cluster中CPU利用率
+(c)图展现了regular task和opportunistic task分别占用CPU时间的百分比
+### 2 Apollo调度质量分析
+![ApolloSchedulingQuality1](./pic/ApolloSchedulingQuality1.png)
+上图展现了Apollo和baseline scheduler调度结果的比较示意图。Baseline scheduler在调度时没有考虑集群负载信息，只是简单寻找空闲的server进行调度。
+![ApolloSchedulingQuality2](./pic/ApolloSchedulingQuality2.png)
+上图展现了在不同scheduler调度下job的运行时间。其中Oracle scheduler待调度任务队列中任务的等待时间为0，task失败率为0，并且知道每个task的确切运行时间。图中是Oracle scheduler的两个变体。分别对应无限资源以及有资源限制。
+### 3 Apollo task运行时间估效果分析
+![ApolloEstimate1](./pic/ApolloEstimate1.png)
+![ApolloEstimate2](./pic/ApolloEstimate2.png)
+上面两幅图分别展示了在应用了时间估计策略前后Apollo的performance以及Apollo时间估计的错误率分布。
+### 4 Apollo 校正策略效果分析
+![ApolloCorrection](./pic/ApolloCorrection.png)
+上图展示了3.4中描述的三种情况的发生概率以及采用正确纠正的概率。
+### 5 Apollo Stable Matching算法效率分析
+![ApolloStableMatching](./pic/ApolloStableMatching.png)
+上图展示了使用最优匹配算法，贪心算法以及stable matching算法时job的完成时间。
