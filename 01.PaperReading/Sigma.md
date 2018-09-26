@@ -51,7 +51,7 @@
   
 ![调度示意图](./pic/sigma-调度.png)
 
-- 用户录入资源需求后Sigma直接通过策略编辑API同步到 ETCD集群中统一管理。当用户再次发起请求时，Sigma 调度系统即从ETCD集群中读取
+- 用户录入资源需求后Sigma直接通过策略编辑API同步到 ETCD集群中统一管理。当用户再次发起请求时，Sigma 调度系统即从ETCD集群中读取响应策略并进行分配。
   
 ![集群示意图](./pic/sigma-集群.png)
 
@@ -103,5 +103,5 @@
 ## 参考文献
 - [1] [丁宇 .  阿里巴巴云化架构创新之路](https://bj2017.archsummit.com/presentation/285)
 - [2] [侯前明 . Pouch和阿里容器技术演进](https://bj2017.archsummit.com/presentation/313)
-- [3] [吕奇 . 阿里混部技术最佳实践](http://chuansong.me/n/2035187)
-- [4] [张瓅玶 .阿里巴巴调度与集群管理系统Sigma](http://chuansong.me/n/2035187)
+- [3] [吕奇 . 阿里混部技术最佳实践](https://bj2017.archsummit.com/presentation/312)
+- [4] [张瓅玶 .阿里巴巴调度与集群管理系统Sigma](https://bj2017.archsummit.com/presentation/311)
