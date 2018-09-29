@@ -16,7 +16,7 @@
 | Kubernetes | 开源 | monolithic | N | 分配时抢占 |-|
 | Omega | 闭源 | shared-state | Y | 分配时抢占 |Y|
 | Apollo | 闭源 | shared-state | Y | 分配时抢占 | Y |
-| Sigma | 闭源 | monolithic | N | 运行时抢占 | Y |
+| Sigma | 闭源 | monolithic | N | 运行时抢占 | - |
 
 ## 说明
 1. 架构的演进模式为`monolithic`->`two-level`->`shared-state`
@@ -31,6 +31,8 @@
 4. 这五种框架，只有`Kubernetes`开源，除了`Omega`的其他几个框架都得到了大规模商用：`Borg`(Google)，`Apollo`(Microsoft)，`Sigma`(阿里巴巴)。`Omega`由Google开发，但其特性不足以像`Borg`那样支持数以千万的机器集群，目前只能作为`Borg`的附属子系统工作。
 
 5. 从`Borg`来看，集中化也并不是性能的瓶颈，`Kubernetes`在`Borg`的基础上做了许多优化，比如引入了包含多任务的工作流，便于追踪与分配资源；更灵活的IP策略，而不是为每一台机器分配一个IP；更简单的部署方法，只需要书写简单的`yaml`配置文件即可完成部署。
+
+6. 几乎所有的系统都先后实现了不同工作负载混部的功能，通过将不同工作负载混合部署到同一集群甚至机器的方式实现消除资源使用的“锯齿”，以此来提高利用率。
 
 ------------------------
 ## 参考文献
