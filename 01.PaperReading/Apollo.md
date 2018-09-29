@@ -39,9 +39,12 @@ Apollo框架的主要组成部分：
 ### 3 基于预估运行时间的调度
 #### 3.1 job运行时间的估计
 计算公式：
+
 *E<sub>succ</sub> = I + W + R*
+
 *C = P<sub>succ</sub>E<sub>succ</sub> + K<sub>fail</sub>(1 -  P<sub>succ</sub>)E<sub>succ</sub>*
-其中，*E<sub>succ</sub>*表示task不会失败时估计的运行时间，*I*表示读取文件等初始化的时间，*W*表示根据Waste-time Matrix查询目标server的时间，*R*表示task的运行时间,*P<sub>succ</sub>*表示task正常运行的概率，*K<sub>fail</sub>*表示task失败时，penalty常数。
+
+其中，*E<sub>succ</sub>* 表示task不会失败时估计的运行时间，*I*表示读取文件等初始化的时间，*W* 表示根据Waste-time Matrix查询目标server的时间，*R*表示task的运行时间,*P<sub>succ</sub>* 表示task正常运行的概率，*K<sub>fail</sub>* 表示task失败时，penalty常数。
 #### 3.2 Task优先级
 job latency不仅与预估的运行时间有关，与task调度顺序也有关。而task得调度顺序取决于task priority。对于DAG中不同的stage,优先级往往不同。根据预估job执行流中的关键路径为每一个stage赋予不同的priority。而对于同一个stage中的task，priority由输入数据得size决定。
 #### 3.3 Stable Matching
