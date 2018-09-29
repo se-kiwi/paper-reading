@@ -10,13 +10,13 @@
 
 ## 对比
 
-| 框架 | 开源/闭源 | 架构 | 多调度器支持 | 优先级抢占策略 | 负载预测
+| 框架 | 开源/闭源 | 架构 | 多调度器支持 | 优先级抢占策略 | 负载预测 |
 | :---: | :---: | :---: | :---: | :---: | :---:|
-| Borg | 闭源 | monolithic | N | 分配时抢占 | Y
-| Kubernetes | 开源 | monolithic | N | 分配时抢占 | 
-| Omega | 闭源 | shared-state | Y |  | 
-| Apollo | 闭源 | shared-state | Y | 分配时抢占 | Y
-| Sigma | 闭源 | monolithic | N | 运行时抢占 | Y
+| Borg | 闭源 | monolithic | N | 分配时抢占 | Y |
+| Kubernetes | 开源 | monolithic | N | 分配时抢占 |-|
+| Omega | 闭源 | shared-state | Y | 分配时抢占 |Y|
+| Apollo | 闭源 | shared-state | Y | 分配时抢占 | Y |
+| Sigma | 闭源 | monolithic | N | 运行时抢占 | Y |
 
 ## 说明
 1. 架构的演进模式为`monolithic`->`two-level`->`shared-state`
@@ -32,8 +32,8 @@
 
 5. 从`Borg`来看，集中化也并不是性能的瓶颈，`Kubernetes`在`Borg`的基础上做了许多优化，比如引入了包含多任务的工作流，便于追踪与分配资源；更灵活的IP策略，而不是为每一台机器分配一个IP；更简单的部署方法，只需要书写简单的`yaml`配置文件即可完成部署。
 
-
 ------------------------
 ## 参考文献
-- [1] [The evolution of cluster scheduler architectures](http://www.firmament.io/blog/scheduler-architectures.html)
-- [2] [Mesos, Omega, Borg: A Survey](https://www.umbrant.com/2015/05/27/mesos-omega-borg-a-survey/)
+- \[1][The evolution of cluster scheduler architectures](http://www.firmament.io/blog/scheduler-architectures.html)
+- \[2][Mesos, Omega, Borg: A Survey](https://www.umbrant.com/2015/05/27/mesos-omega-borg-a-survey/)
+
