@@ -10,13 +10,13 @@
 
 ## 对比
 
-| 框架 | 开源/闭源 | 架构 | 多调度器支持 | 优先级抢占支持 | 
-| :---: | :---: | :---: | :---: | :---: |
-| Borg | 闭源 | monolithic | N | Y |
-| Kubernetes | 开源 | monolithic | N | Y |
-| Omega | 闭源 | shared-state | Y | Y |
-| Apollo | 闭源 | shared-state | Y | Y |
-| Sigma | 闭源 | monolithic | N | Y |
+| 框架 | 开源/闭源 | 架构 | 多调度器支持 | 优先级抢占策略 | 负载预测
+| :---: | :---: | :---: | :---: | :---: | :---:|
+| Borg | 闭源 | monolithic | N | 分配时抢占 | Y
+| Kubernetes | 开源 | monolithic | N | 分配时抢占 | 
+| Omega | 闭源 | shared-state | Y |  | 
+| Apollo | 闭源 | shared-state | Y | 分配时抢占 | Y
+| Sigma | 闭源 | monolithic | N | 运行时抢占 | Y
 
 ## 说明
 1. 架构的演进模式为`monolithic`->`two-level`->`shared-state`
