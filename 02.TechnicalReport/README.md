@@ -355,6 +355,7 @@ Ceph是一个可靠地、自动重均衡、自动恢复的分布式存储系统�
 #### 架构
 Ceph架构图如下
 ![Ceph架构图](./pic/CephArchitecture.png)
+
 Ceph主要由三部分组成。Clients，Metadata Cluster，Object Storage Cluster组成。
 客户端：暴露near-POSIX的文件系统接口给主机或进程; 
 OSD集群：存储所有数据和元数据; 
