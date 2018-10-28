@@ -11,7 +11,7 @@
 - Apollo采用了一系列延时纠正策略来应对运行过程中的动态变化。
 - 引入机会调度策略（ opportunistic scheduling），提高资源利用率。
 - 阶段性迁移策略，确保架构无风险迁移。
-##二 现实中生产环境下的大规模调度简介
+## 二 现实中生产环境下的大规模调度简介
 ### 1 重要概念
 - DAG（directed asylic graph）：Apolloc将一个job的执行情况抽象成一个有向无环图。如下图所示，点表示一个任务（task），边表示task之间的数据流。一个job的执行可以划分为若干个stage。
 - DOP（degree of parallelism ）：每个stage中并行的task数量。
@@ -32,7 +32,7 @@ Apollo采用基于token的容量管理机制。每一个token代表了CPU和内�
 Apollo框架的主要组成部分：
 - JM(Job Manager)：每个cluster上有一个，它管理job的生命周期
 - RM(Resource Monitor)：收集来自Process Nodes上的负载信息（主要通过），为JM提供整个cluster的状态信息，便于确定job的调度的决策。
-- PN(Process Node)：每个sever上有一个本地队列，存储了调度到这个server待执行的task，。PN可以根据这个队列对未来的资源状况进行预测，并将预测结果以wait time matrix的形式发给RM，RM进行整合后连同task的个性化信息一起提供给JM。Wait Time Matrixr如上图所示，描述的是对于特定CPU和内存要求的task在这台server执行前需要的等待的时间。
+- PN(Process Node)：每个sever上有一个本地队列，存储了调度到这个server待执行的task。PN可以根据这个队列对未来的资源状况进行预测，并将预测结果以wait time matrix的形式发给RM，RM进行整合后连同task的个性化信息一起提供给JM。Wait-time Matrixr如上图所示，描述的是对于特定CPU和内存要求的task在这台server执行前需要的等待的时间。
 ### 2 PN queue和Wait-time Matrix
 每一个server上的Process Node管理着一个task队列，储存被分配到这个server上的task。当一个task被调度到某个server上时,JM会发送一个task-creation请求，,同时会发送对内存和CPU的要求,以及预计的运行时间和运行这个task的所需的文件。当server接收到task-creation请求，就会将所需的文件拷贝一份到本地.然后PN监视server的内存以及CPU状态,一旦资源可用，便执行task。因此，task队列并非FIFO，如果前面的task配额不足，后面的task配额足够，便会先调度后面的task。
 此外，PN会提供反馈给JM。JM刚开始采用较为保守的估计策略。根据要处理的数据大小以及计算类型估计运行时间。一旦某个task开始运行，鉴于位于同一个stage的task执行的计算类似，运行时间相近，因此PN会监视这个task的运行,响应JM相应的更新请求，将CPU，内存以及I/O吞吐量发送给JM，JM重新估计同一stage的task的运行时间。Waste-time Matrix的情况如上。
@@ -49,7 +49,7 @@ Apollo框架的主要组成部分：
 job latency不仅与预估的运行时间有关，与task调度顺序也有关。而task得调度顺序取决于task priority。对于DAG中不同的stage,优先级往往不同。根据预估job执行流中的关键路径为每一个stage赋予不同的priority。而对于同一个stage中的task，priority由输入数据得size决定。
 #### 3.3 Stable Matching
 对于同一个stage中的task，往往会进行批调度。即将一批task同时调度。常见算法有stable matching和贪心算法。Apollo采用stable matching算法得一个变体，对于每一个task，JM会找到使其预估运行时间最短得server，成为一个proposal，一旦有两个task对同一个server提出proposal，会选择在这个server上运行时间节省最多的那个，另一个会撤销proposal，重新调度，直到所有的task都被调度。
-####3.4 校正策略
+#### 3.4 校正策略
 ##### 3.4.1 调度发生错误的原因
 - 因为分布式的原因，JMs调度决策彼此存在竞争。
 - 调度过程中使用的Waste-time Matrix数据可能已过期。因为在实际的生产环境中，server状态可能随时改变。
