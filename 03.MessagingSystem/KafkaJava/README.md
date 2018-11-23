@@ -1,6 +1,6 @@
 # Kafka Practice
 
-## [B part2] Producer and Consumer
+## Producer and Consumer
 
 ### Producer——phone num producer
 
@@ -40,7 +40,7 @@ mvn exec:java -Dexec.mainClass="kiwi.ProducerDemo"
 mvn exec:java -Dexec.mainClass="kiwi.ConsumerDemo" 
 ```
 
-## [D] Stream Processing
+## Stream Processing
 
 ### Stream Processor:
 
