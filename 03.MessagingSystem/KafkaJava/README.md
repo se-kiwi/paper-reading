@@ -1,10 +1,10 @@
 # Kafka Practice
 
-## [B] Producer and Consumer
+## [B part2] Producer and Consumer
 
 ### Producer——phone num producer
 
-Producer负责随机生成电话号码并发送到卡夫卡的producer。
+Producer负责随机生成电话号码并发送到Kafka的producer。
 
 ### Consumer
 
