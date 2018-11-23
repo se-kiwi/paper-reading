@@ -1,6 +1,6 @@
-# PartA Experiment Report
+# Experiment Report
 
-## 1 测试环境
+## 测试环境
 
 操作系统：Centos7 虚拟机
 
@@ -14,7 +14,7 @@
 
 ### Storage
 
-#### 1 hdparm指令
+#### 1. hdparm指令
 
 centos提供了hdparm指令进行磁盘读写测速
 
@@ -22,7 +22,7 @@ centos提供了hdparm指令进行磁盘读写测速
 hdparm -t /dev/mapper/centos-root
 ```
 
-#### 2 代码测试
+#### 2. 代码测试
 
 ```c
 #include <stdio.h>
