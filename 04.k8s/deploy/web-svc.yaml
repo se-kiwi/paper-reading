@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: forntendkiwi
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetport: 8080
+      nodePort: 30007
+  selector:
+    app: forntendkiwi

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: webkiwi
+spec:
+  replicas: 1
+  selector:
+    app: webkiwi
+  template:
+    metadata:
+      labels:
+        app: webkiwi
+    spec:
+      containers:
+        - name: webkiwi
+          image: bywind/flawsweeper-backend
+          ports:
+          - containerPort: 8080
